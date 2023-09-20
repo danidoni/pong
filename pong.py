@@ -7,6 +7,7 @@ import pygame as pg
 
 SCREENRECT = pg.Rect(0, 0, 640, 480)
 PADDLE_SIZE = (10, 100)
+BALL_SIZE = (10, 10)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
@@ -25,6 +26,20 @@ class Paddle:
         if self.rect.bottom + 5 <= SCREENRECT.bottom:
             self.rect.move_ip(0, 5)
 
+
+class Ball:
+    def __init__(self, position: pg.Vector2, velocity: pg.Vector2) -> None:
+        self.position: pg.Vector2 = position
+        self.velocity: pg.Vector2 = velocity
+
+    def render(self, pg, screen):
+        rect = pg.Rect(self.position, BALL_SIZE)
+        pg.draw.rect(screen, WHITE, rect)
+
+    def update(self):
+        self.position += self.velocity
+
+
 def main(winstyle=0):
     # Initialize pygame
     pg.init()
@@ -37,6 +52,8 @@ def main(winstyle=0):
 
     player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     other_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
+    ball = Ball(position=pg.Vector2(x=SCREENRECT[2] / 2 - BALL_SIZE[0] / 2, y= SCREENRECT[3] / 2 - BALL_SIZE[1] / 2),
+                velocity=pg.Vector2(-10, -10))
 
     clock = pg.time.Clock()
 
@@ -53,10 +70,13 @@ def main(winstyle=0):
         if pg.key.get_pressed()[pg.K_s]:
             player_paddle.move_down()
 
+        ball.update()
+
         screen.fill(BLACK)
 
         player_paddle.render(pg, screen)
         other_paddle.render(pg, screen)
+        ball.render(pg, screen)
 
         pg.display.update()
 
