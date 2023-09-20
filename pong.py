@@ -7,16 +7,23 @@ import pygame as pg
 
 SCREENRECT = pg.Rect(0, 0, 640, 480)
 PADDLE_SIZE = (10, 100)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 class Paddle:
-    def __init__(self, position, size, color):
-        self.position = position
-        self.size = size
-        self.color = color
+    def __init__(self, position):
+        self.rect = pg.Rect(position, PADDLE_SIZE)
 
     def render(self, pg, screen):
-        rect = pg.Rect(self.position, self.size)
-        pg.draw.rect(screen, self.color, rect)
+        pg.draw.rect(screen, WHITE, self.rect)
+
+    def move_up(self):
+        if self.rect.top - 5 >= 0:
+            self.rect.move_ip(0, -5)
+
+    def move_down(self):
+        if self.rect.bottom + 5 <= SCREENRECT.bottom:
+            self.rect.move_ip(0, 5)
 
 def main(winstyle=0):
     # Initialize pygame
@@ -28,8 +35,8 @@ def main(winstyle=0):
 
     pg.display.set_caption("Pong")
 
-    player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)), PADDLE_SIZE, (255, 255, 255))
-    other_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)), PADDLE_SIZE, (255, 255, 255))
+    player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
+    other_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
 
     clock = pg.time.Clock()
 
@@ -40,6 +47,13 @@ def main(winstyle=0):
 
             if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                 return
+            
+        if pg.key.get_pressed()[pg.K_w]:
+            player_paddle.move_up()
+        if pg.key.get_pressed()[pg.K_s]:
+            player_paddle.move_down()
+
+        screen.fill(BLACK)
 
         player_paddle.render(pg, screen)
         other_paddle.render(pg, screen)
