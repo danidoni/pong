@@ -37,7 +37,17 @@ class Ball:
         pg.draw.rect(screen, WHITE, rect)
 
     def update(self):
-        self.position += self.velocity
+        next_position = self.position + self.velocity
+        if next_position.x <= 0:
+            self.velocity.x *= -1
+        if next_position.x + BALL_SIZE[0] >= SCREENRECT[2]:
+            self.velocity.x *= -1
+        if next_position.y <= 0:
+            self.velocity.y *= -1
+        if next_position.y + BALL_SIZE[1] >= SCREENRECT[3]:
+            self.velocity.y *= -1
+
+        self.position = next_position
 
 
 def main(winstyle=0):
@@ -53,7 +63,7 @@ def main(winstyle=0):
     player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     other_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     ball = Ball(position=pg.Vector2(x=SCREENRECT[2] / 2 - BALL_SIZE[0] / 2, y= SCREENRECT[3] / 2 - BALL_SIZE[1] / 2),
-                velocity=pg.Vector2(-10, -10))
+                velocity=pg.Vector2(-5, -5))
 
     clock = pg.time.Clock()
 
