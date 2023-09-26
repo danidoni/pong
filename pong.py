@@ -12,6 +12,7 @@ WHITE = (255, 255, 255)
 
 class Paddle:
     def __init__(self, position):
+        self.score = 0
         self.rect = pg.Rect(position, PADDLE_SIZE)
 
     def render(self, pg, screen):
@@ -24,6 +25,9 @@ class Paddle:
     def move_down(self):
         if self.rect.bottom + 5 <= SCREENRECT.bottom:
             self.rect.move_ip(0, 5)
+
+    def score_up(self):
+        self.score += 1
 
 
 class Ball:
@@ -77,6 +81,17 @@ class CollisionSystem:
             ball.angle *= -1
 
 
+class ScoreSystem:
+    def update(self, ball, player_paddle, ai_paddle):
+        if ball.position.x <= 0:
+            ai_paddle.score_up()
+
+        if ball.position.x + BALL_SIZE[0] >= SCREENRECT[2]:
+            player_paddle.score_up()
+
+        print("Player: ", player_paddle.score, " AI: ", ai_paddle.score)
+
+
 def main(winstyle=0):
     # Initialize pygame
     pg.init()
@@ -87,6 +102,9 @@ def main(winstyle=0):
 
     pg.display.set_caption("Pong")
 
+    my_font = pg.freetype.SysFont('Monospace', 30)
+    text_surface = my_font.render('Some Text', False, (220, 0, 0))
+
     player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     other_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     ball = Ball(position=pg.Vector2(x=SCREENRECT[2] / 2 - BALL_SIZE[0] / 2, y= SCREENRECT[3] / 2 - BALL_SIZE[1] / 2),
@@ -94,6 +112,7 @@ def main(winstyle=0):
                 angle=100)
 
     collision_system = CollisionSystem()
+    score_system = ScoreSystem()
 
     clock = pg.time.Clock()
 
@@ -113,12 +132,19 @@ def main(winstyle=0):
         ball.update()
 
         collision_system.update(ball, player_paddle, other_paddle)
+        score_system.update(ball, player_paddle, other_paddle)
 
         screen.fill(BLACK)
 
         player_paddle.render(pg, screen)
         other_paddle.render(pg, screen)
         ball.render(pg, screen)
+
+        text_surface, _ = my_font.render(str(player_paddle.score), (255, 255, 255))
+        screen.blit(text_surface, (0, 0))
+
+        text_surface, _ = my_font.render(str(other_paddle.score), (255, 255, 255))
+        screen.blit(text_surface, (SCREENRECT[2] - 20, 0))
 
         pg.display.update()
 
