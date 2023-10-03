@@ -72,24 +72,24 @@ class Ball:
 
 
 class CollisionSystem:
-    def update(self, ball, player_paddle, ai_paddle):
+    def update(self, ball, player1_paddle, player2_paddle):
         ball_rect = ball.rect()
-        if ball_rect.colliderect(player_paddle.rect):
+        if ball_rect.colliderect(player1_paddle.rect):
             ball.angle *= -1
 
-        if ball_rect.colliderect(ai_paddle.rect):
+        if ball_rect.colliderect(player2_paddle.rect):
             ball.angle *= -1
 
 
 class ScoreSystem:
-    def update(self, ball, player_paddle, ai_paddle):
+    def update(self, ball, player1_paddle, player2_paddle):
         if ball.position.x <= 0:
-            ai_paddle.score_up()
+            player2_paddle.score_up()
 
         if ball.position.x + BALL_SIZE[0] >= SCREENRECT[2]:
-            player_paddle.score_up()
+            player1_paddle.score_up()
 
-        print("Player: ", player_paddle.score, " AI: ", ai_paddle.score)
+        print("Player: ", player1_paddle.score, " AI: ", player2_paddle.score)
 
 
 def main(winstyle=0):
@@ -105,8 +105,8 @@ def main(winstyle=0):
     my_font: pg.Font = pg.freetype.SysFont('Monospace', 30)
     text_surface = my_font.render('Some Text', False, (220, 0, 0))
 
-    player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
-    other_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
+    player1_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
+    player2_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     ball = Ball(position=pg.Vector2(x=SCREENRECT[2] / 2 - BALL_SIZE[0] / 2, y= SCREENRECT[3] / 2 - BALL_SIZE[1] / 2),
                 speed=5,
                 angle=100)
@@ -125,25 +125,29 @@ def main(winstyle=0):
                 return
             
         if pg.key.get_pressed()[pg.K_w]:
-            player_paddle.move_up()
+            player1_paddle.move_up()
         if pg.key.get_pressed()[pg.K_s]:
-            player_paddle.move_down()
+            player1_paddle.move_down()
+        if pg.key.get_pressed()[pg.K_UP]:
+            player2_paddle.move_up()
+        if pg.key.get_pressed()[pg.K_DOWN]:
+            player2_paddle.move_down()
 
         ball.update()
 
-        collision_system.update(ball, player_paddle, other_paddle)
-        score_system.update(ball, player_paddle, other_paddle)
+        collision_system.update(ball, player1_paddle, player2_paddle)
+        score_system.update(ball, player1_paddle, player2_paddle)
 
         screen.fill(BLACK)
 
-        player_paddle.render(pg, screen)
-        other_paddle.render(pg, screen)
+        player1_paddle.render(pg, screen)
+        player2_paddle.render(pg, screen)
         ball.render(pg, screen)
 
-        text_surface, _ = my_font.render("1P: {}".format(str(player_paddle.score)), (255, 255, 255))
+        text_surface, _ = my_font.render("1P: {}".format(str(player1_paddle.score)), (255, 255, 255))
         screen.blit(text_surface, (0, 0))
 
-        text_surface, font_rect = my_font.render("2P: {}".format(str(other_paddle.score)), (255, 255, 255))
+        text_surface, font_rect = my_font.render("2P: {}".format(str(player2_paddle.score)), (255, 255, 255))
         screen.blit(text_surface, (SCREENRECT[2] - font_rect.width, 0))
 
         pg.display.update()
