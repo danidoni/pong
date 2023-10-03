@@ -1,5 +1,6 @@
 from typing import List
 from math import sin, cos, radians
+import random
 
 # import basic pygame modules
 import pygame as pg
@@ -31,11 +32,8 @@ class Paddle:
 
 
 class Ball:
-    def __init__(self, position: pg.Vector2, speed, angle) -> None:
+    def __init__(self, speed) -> None:
         self.speed = speed
-        # In degrees, 0 is down, 90 to the right
-        self.angle = angle
-        self.position: pg.Vector2 = position
 
     def velocity(self) -> pg.Vector2:
         rads = radians(self.angle)
@@ -71,7 +69,9 @@ class Ball:
         self.position = next_position
 
     def reset(self):
-        self.position = pg.Vector2(SCREENRECT[2] / 2, SCREENRECT[3] / 2)
+        self.position = pg.Vector2(x=SCREENRECT[2] / 2 - BALL_SIZE[0] / 2, y= SCREENRECT[3] / 2 - BALL_SIZE[1] / 2)
+        # In degrees, 0 is down, 90 to the right
+        self.angle = random.randrange(30, 150)
 
 
 class CollisionSystem:
@@ -110,9 +110,8 @@ def main(winstyle=0):
 
     player1_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
     player2_paddle = Paddle((SCREENRECT[2] - 20, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
-    ball = Ball(position=pg.Vector2(x=SCREENRECT[2] / 2 - BALL_SIZE[0] / 2, y= SCREENRECT[3] / 2 - BALL_SIZE[1] / 2),
-                speed=5,
-                angle=100)
+    ball = Ball(speed=5)
+    ball.reset()
 
     collision_system = CollisionSystem()
     score_system = ScoreSystem()
