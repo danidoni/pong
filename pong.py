@@ -70,6 +70,9 @@ class Ball:
 
         self.position = next_position
 
+    def reset(self):
+        self.position = pg.Vector2(SCREENRECT[2] / 2, SCREENRECT[3] / 2)
+
 
 class CollisionSystem:
     def update(self, ball, player1_paddle, player2_paddle):
@@ -85,11 +88,11 @@ class ScoreSystem:
     def update(self, ball, player1_paddle, player2_paddle):
         if ball.position.x <= 0:
             player2_paddle.score_up()
+            ball.reset()
 
         if ball.position.x + BALL_SIZE[0] >= SCREENRECT[2]:
             player1_paddle.score_up()
-
-        print("Player: ", player1_paddle.score, " AI: ", player2_paddle.score)
+            ball.reset()
 
 
 def main(winstyle=0):
