@@ -102,7 +102,7 @@ def main(winstyle=0):
 
     pg.display.set_caption("Pong")
 
-    my_font = pg.freetype.SysFont('Monospace', 30)
+    my_font: pg.Font = pg.freetype.SysFont('Monospace', 30)
     text_surface = my_font.render('Some Text', False, (220, 0, 0))
 
     player_paddle = Paddle((10, (SCREENRECT[3] / 2) - (PADDLE_SIZE[1] / 2)))
@@ -140,11 +140,11 @@ def main(winstyle=0):
         other_paddle.render(pg, screen)
         ball.render(pg, screen)
 
-        text_surface, _ = my_font.render(str(player_paddle.score), (255, 255, 255))
+        text_surface, _ = my_font.render("1P: {}".format(str(player_paddle.score)), (255, 255, 255))
         screen.blit(text_surface, (0, 0))
 
-        text_surface, _ = my_font.render(str(other_paddle.score), (255, 255, 255))
-        screen.blit(text_surface, (SCREENRECT[2] - 20, 0))
+        text_surface, font_rect = my_font.render("2P: {}".format(str(other_paddle.score)), (255, 255, 255))
+        screen.blit(text_surface, (SCREENRECT[2] - font_rect.width, 0))
 
         pg.display.update()
 
