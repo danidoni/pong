@@ -146,11 +146,14 @@ def main(winstyle=0):
         player2_paddle.render(pg, screen)
         ball.render(pg, screen)
 
-        text_surface, _ = my_font.render("1P: {}".format(str(player1_paddle.score)), (255, 255, 255))
-        screen.blit(text_surface, (0, 0))
+        pg.draw.line(screen, (255, 255, 255), (SCREENRECT[2] / 2, 0), (SCREENRECT[2] / 2, SCREENRECT[3]))
 
-        text_surface, font_rect = my_font.render("2P: {}".format(str(player2_paddle.score)), (255, 255, 255))
-        screen.blit(text_surface, (SCREENRECT[2] - font_rect.width, 0))
+        text_surface, font_rect = my_font.render(str(player1_paddle.score), (255, 255, 255))
+        pg.draw.rect(screen, (255, 0, 0), font_rect)
+        screen.blit(text_surface, ((SCREENRECT[2] / 2) - 20 - (font_rect.width / 2), 0))
+
+        text_surface, font_rect = my_font.render(str(player2_paddle.score), (255, 255, 255))
+        screen.blit(text_surface, ((SCREENRECT[2] / 2) + 20 - (font_rect.width / 2), 0))
 
         pg.display.update()
 
